@@ -28,6 +28,20 @@ import {
   getHostname
 } from './utils.js';
 
+import {
+  runExperimentation,
+  showExperimentationRail,
+} from './experiment-loader.js';
+
+const experimentationConfig = {
+  prodHost: 'www.mysite.com', // TODO: change domains for your prodHost.
+  audiences: {
+    mobile: () => window.innerWidth < 600,
+    desktop: () => window.innerWidth >= 600,
+    // define your custom audiences here as needed
+  },
+};
+
 function addPreconnect(origin) {
   try {
     if (!origin) return;
@@ -317,6 +331,7 @@ async function loadEager(doc) {
     // ignore
   }
   decorateTemplateAndTheme();
+  await runExperimentation(doc, experimentationConfig);
   renderWBDataLayer();
   const main = doc.querySelector('main');
   if (main) {
@@ -395,6 +410,8 @@ async function loadLazy(doc) {
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
+
+  await showExperimentationRail(doc, experimentationConfig);
 }
 
 function isDMOpenAPIUrl(src) {
