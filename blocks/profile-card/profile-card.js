@@ -27,8 +27,7 @@ export default function decorate(block) {
     if (img) {
       const optimizedPic = createOptimizedPicture(img.src, img.alt || '', false, [{ width: '200' }]);
       moveInstrumentation(img, optimizedPic.querySelector('img'));
-      img.closest('picture').replaceWith(optimizedPic);
-      avatarWrapper.append(imageEl.querySelector('picture') || imageEl.firstElementChild);
+      avatarWrapper.append(optimizedPic);
     }
   }
   card.append(avatarWrapper);
