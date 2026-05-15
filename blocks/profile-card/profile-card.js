@@ -56,16 +56,18 @@ export default function decorate(block) {
     card.append(cargoWrapper);
   }
 
-  // CTA — plain text rendered as primary button
+  // CTA — plain text rendered as primary button using WKND's .cta-button a.button pattern
   const ctaText = ctaRow?.querySelector('p')?.textContent?.trim() || ctaRow?.textContent?.trim();
   if (ctaText) {
-    const ctaWrapper = document.createElement('div');
-    ctaWrapper.className = 'profile-card-cta';
-    moveInstrumentation(ctaRow, ctaWrapper);
-    const btn = document.createElement('span');
-    btn.className = 'profile-card-btn';
-    btn.textContent = ctaText;
-    ctaWrapper.append(btn);
+    const ctaWrapper = document.createElement('p');
+    ctaWrapper.className = 'button-container cta-button';
+    if (ctaRow) moveInstrumentation(ctaRow, ctaWrapper);
+    const link = document.createElement('a');
+    link.className = 'button';
+    link.href = '#';
+    link.textContent = ctaText;
+    link.addEventListener('click', (e) => e.preventDefault());
+    ctaWrapper.append(link);
     card.append(ctaWrapper);
   }
 

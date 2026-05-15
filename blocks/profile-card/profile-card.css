@@ -92,33 +92,10 @@
   white-space: normal;
 }
 
-/* CTA — primary button, same style as .cta-button a.button across the project */
-.profile-card-cta {
-  margin-top: 4px;
-}
-
-.profile-card-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: var(--main-accent-color);
-  color: var(--text-light);
-  font-family: var(--heading-font-family);
-  font-size: var(--body-font-size-xs);
-  font-weight: 600;
-  line-height: 1.2;
-  text-align: center;
-  border: 2px solid var(--main-accent-color);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.15s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.profile-card-btn:hover {
-  background-color: transparent;
-  color: var(--main-accent-color);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+/* CTA — uses global .cta-button a.button styles from styles.css */
+.profile-card-inner p.button-container {
+  margin-top: 8px;
+  margin-bottom: 0;
 }
 
 @media (width < 768px) {
