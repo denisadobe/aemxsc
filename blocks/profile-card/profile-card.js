@@ -3,7 +3,7 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const rows = [...block.children];
-  const [imageRow, nameRow, roleRow, cargoRow, ctaLabelRow, ctaUrlRow] = rows;
+  const [imageRow, nameRow, roleRow, cargoRow, ctaRow] = rows;
 
   const card = document.createElement('div');
   card.className = 'profile-card-inner';
@@ -56,18 +56,16 @@ export default function decorate(block) {
     card.append(cargoWrapper);
   }
 
-  // CTA Button (optional) — uses WKND primary button pattern (.cta-button a.button)
-  const ctaLabel = ctaLabelRow?.querySelector('p')?.textContent?.trim() || ctaLabelRow?.textContent?.trim();
-  const ctaUrl = ctaUrlRow?.querySelector('p')?.textContent?.trim() || ctaUrlRow?.textContent?.trim();
-  if (ctaLabel && ctaUrl) {
+  // CTA — richtext with a link; extract <a>, add button class
+  if (ctaRow && ctaRow.textContent.trim()) {
     const ctaWrapper = document.createElement('div');
-    ctaWrapper.className = 'profile-card-cta cta-button';
-    if (ctaLabelRow) moveInstrumentation(ctaLabelRow, ctaWrapper);
-    const link = document.createElement('a');
-    link.href = ctaUrl;
-    link.className = 'button';
-    link.textContent = ctaLabel;
-    ctaWrapper.append(link);
+    ctaWrapper.className = 'profile-card-cta';
+    moveInstrumentation(ctaRow, ctaWrapper);
+    const link = ctaRow.querySelector('a');
+    if (link) {
+      link.classList.add('button');
+      ctaWrapper.append(link);
+    }
     card.append(ctaWrapper);
   }
 
