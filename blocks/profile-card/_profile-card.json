@@ -49,11 +49,11 @@
           "value": ""
         },
         {
-          "component": "richtext",
+          "component": "text",
+          "valueType": "string",
           "name": "cta",
-          "value": "",
           "label": "CTA",
-          "valueType": "string"
+          "value": ""
         }
       ]
     }

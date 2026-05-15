@@ -7,9 +7,9 @@
   border-radius: var(--border-radius-medium);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 40px 32px 32px;
+  max-width: 360px;
+  margin: 0 auto;
   position: relative;
-  overflow: visible;
-  width: 100%;
   box-sizing: border-box;
 }
 
@@ -48,7 +48,6 @@
 /* Name */
 .profile-card-name {
   margin-bottom: 6px;
-  width: 100%;
 }
 
 .profile-card-name h3 {
@@ -59,12 +58,13 @@
   margin: 0;
   line-height: 1.3;
   white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 /* Role */
 .profile-card-role {
   margin-bottom: 8px;
-  width: 100%;
 }
 
 .profile-card-role p {
@@ -81,7 +81,6 @@
 /* Cargo */
 .profile-card-cargo {
   margin-bottom: 20px;
-  width: 100%;
 }
 
 .profile-card-cargo p {
@@ -93,35 +92,33 @@
   white-space: normal;
 }
 
-/* CTA Button */
+/* CTA — primary button, same style as .cta-button a.button across the project */
 .profile-card-cta {
   margin-top: 4px;
 }
 
-.profile-card-cta a.button {
+.profile-card-btn {
   display: inline-block;
-  padding: 12px 28px;
+  padding: 12px 24px;
   background-color: var(--main-accent-color);
   color: var(--text-light);
   font-family: var(--heading-font-family);
   font-size: var(--body-font-size-xs);
   font-weight: 600;
-  text-decoration: none;
+  line-height: 1.2;
+  text-align: center;
   border: 2px solid var(--main-accent-color);
-  border-radius: var(--border-radius-base);
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
-  white-space: nowrap;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.profile-card-cta a.button::after {
-  display: none;
-}
-
-.profile-card-cta a.button:hover {
+.profile-card-btn:hover {
   background-color: transparent;
   color: var(--main-accent-color);
   transform: translateY(-1px);
-  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 @media (width < 768px) {

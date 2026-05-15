@@ -56,16 +56,16 @@ export default function decorate(block) {
     card.append(cargoWrapper);
   }
 
-  // CTA — richtext with a link; extract <a>, add button class
-  if (ctaRow && ctaRow.textContent.trim()) {
+  // CTA — plain text rendered as primary button
+  const ctaText = ctaRow?.querySelector('p')?.textContent?.trim() || ctaRow?.textContent?.trim();
+  if (ctaText) {
     const ctaWrapper = document.createElement('div');
     ctaWrapper.className = 'profile-card-cta';
     moveInstrumentation(ctaRow, ctaWrapper);
-    const link = ctaRow.querySelector('a');
-    if (link) {
-      link.classList.add('button');
-      ctaWrapper.append(link);
-    }
+    const btn = document.createElement('span');
+    btn.className = 'profile-card-btn';
+    btn.textContent = ctaText;
+    ctaWrapper.append(btn);
     card.append(ctaWrapper);
   }
 
