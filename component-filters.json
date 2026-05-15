@@ -31,8 +31,7 @@
       "form",
       "forex",
       "embed-adaptive-form",
-      "find-a-doctor",
-      "profile-card"
+      "find-a-doctor"
     ]
   },
   {
@@ -64,7 +63,7 @@
     "components": [
       "button",
       "image",
-      "text",
+      "text",      
       "title",
       "video"
     ]
