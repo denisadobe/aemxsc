@@ -3,7 +3,7 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const rows = [...block.children];
-  const [imageRow, nameRow, roleRow, bioRow, ctaRow] = rows;
+  const [imageRow, nameRow, roleRow, cargoRow, ctaLabelRow, ctaUrlRow] = rows;
 
   const card = document.createElement('div');
   card.className = 'profile-card-inner';
@@ -45,21 +45,29 @@ export default function decorate(block) {
   }
   card.append(roleWrapper);
 
-  // Bio (optional)
-  if (bioRow && bioRow.textContent.trim()) {
-    const bioWrapper = document.createElement('div');
-    bioWrapper.className = 'profile-card-bio';
-    moveInstrumentation(bioRow, bioWrapper);
-    bioWrapper.innerHTML = bioRow.querySelector('div')?.innerHTML || bioRow.innerHTML;
-    card.append(bioWrapper);
+  // Cargo (optional)
+  if (cargoRow && cargoRow.textContent.trim()) {
+    const cargoWrapper = document.createElement('div');
+    cargoWrapper.className = 'profile-card-cargo';
+    moveInstrumentation(cargoRow, cargoWrapper);
+    const cargoEl = document.createElement('p');
+    cargoEl.textContent = cargoRow.querySelector('p')?.textContent?.trim() || cargoRow.textContent?.trim();
+    cargoWrapper.append(cargoEl);
+    card.append(cargoWrapper);
   }
 
-  // CTA Button (optional)
-  if (ctaRow && ctaRow.textContent.trim()) {
+  // CTA Button (optional) — uses WKND primary button pattern (.cta-button a.button)
+  const ctaLabel = ctaLabelRow?.querySelector('p')?.textContent?.trim() || ctaLabelRow?.textContent?.trim();
+  const ctaUrl = ctaUrlRow?.querySelector('p')?.textContent?.trim() || ctaUrlRow?.textContent?.trim();
+  if (ctaLabel && ctaUrl) {
     const ctaWrapper = document.createElement('div');
-    ctaWrapper.className = 'profile-card-cta';
-    moveInstrumentation(ctaRow, ctaWrapper);
-    ctaWrapper.innerHTML = ctaRow.querySelector('div')?.innerHTML || ctaRow.innerHTML;
+    ctaWrapper.className = 'profile-card-cta cta-button';
+    if (ctaLabelRow) moveInstrumentation(ctaLabelRow, ctaWrapper);
+    const link = document.createElement('a');
+    link.href = ctaUrl;
+    link.className = 'button';
+    link.textContent = ctaLabel;
+    ctaWrapper.append(link);
     card.append(ctaWrapper);
   }
 

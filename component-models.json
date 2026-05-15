@@ -6737,18 +6737,25 @@
         "value": ""
       },
       {
-        "component": "richtext",
-        "name": "bio",
-        "value": "",
-        "label": "Bio",
-        "valueType": "string"
+        "component": "text",
+        "valueType": "string",
+        "name": "cargo",
+        "label": "Cargo",
+        "value": ""
       },
       {
-        "component": "richtext",
-        "name": "cta",
-        "value": "",
-        "label": "CTA Button",
-        "valueType": "string"
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaLabel",
+        "label": "CTA - Texto do botão",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "ctaUrl",
+        "label": "CTA - URL",
+        "value": ""
       }
     ]
   }

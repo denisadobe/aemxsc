@@ -64,7 +64,8 @@
     "components": [
       "button",
       "image",
-      "text",      
+      "profile-card",
+      "text",
       "title",
       "video"
     ]
