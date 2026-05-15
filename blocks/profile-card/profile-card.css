@@ -1,0 +1,139 @@
+.profile-card {
+  container-type: inline-size;
+}
+
+.profile-card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 40px 32px 32px;
+  max-width: 320px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Orange top accent bar */
+.profile-card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--main-accent-color), #F97316);
+}
+
+/* Avatar */
+.profile-card-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--main-accent-color);
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.profile-card-avatar picture,
+.profile-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Name */
+.profile-card-name {
+  margin-bottom: 6px;
+}
+
+.profile-card-name h3 {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-xs);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Role */
+.profile-card-role {
+  margin-bottom: 16px;
+}
+
+.profile-card-role p {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--main-accent-color);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Bio */
+.profile-card-bio {
+  margin-bottom: 20px;
+  color: var(--text-color);
+  opacity: 0.75;
+}
+
+.profile-card-bio p {
+  font-size: var(--body-font-size-xs);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* CTA Button */
+.profile-card-cta a {
+  display: inline-block;
+  background-color: var(--main-accent-color);
+  color: var(--text-light);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 28px;
+  border-radius: var(--border-radius-base);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.profile-card-cta a:hover {
+  background-color: var(--link-hover-color);
+  transform: translateY(-1px);
+}
+
+/* Responsive – show multiple cards in a row when used inside a section */
+@container (min-width: 600px) {
+  .profile-card-inner {
+    max-width: 100%;
+  }
+}
+
+/* Grid layout when multiple profile cards are siblings */
+.profile-card-container > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.profile-card-container > div > .profile-card-wrapper {
+  display: contents;
+}
+
+@media (width < 768px) {
+  .profile-card-inner {
+    padding: 32px 24px 24px;
+  }
+
+  .profile-card-avatar {
+    width: 80px;
+    height: 80px;
+  }
+}
