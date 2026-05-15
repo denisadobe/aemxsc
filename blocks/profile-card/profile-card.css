@@ -92,10 +92,40 @@
   white-space: normal;
 }
 
-/* CTA — uses global .cta-button a.button styles from styles.css */
-.profile-card-inner p.button-container {
+/* CTA */
+.profile-card-cta {
   margin-top: 8px;
-  margin-bottom: 0;
+}
+
+.profile-card-cta a.button {
+  display: inline-block !important;
+  padding: 12px 24px !important;
+  background-color: var(--main-accent-color) !important;
+  color: var(--text-light) !important;
+  font-family: var(--heading-font-family) !important;
+  font-size: var(--body-font-size-xs) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  border: 2px solid var(--main-accent-color) !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card-cta a.button::after {
+  display: none !important;
+}
+
+.profile-card-cta a.button:hover {
+  background-color: transparent !important;
+  color: var(--main-accent-color) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  text-decoration: none !important;
 }
 
 @media (width < 768px) {
