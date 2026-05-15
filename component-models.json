@@ -6725,7 +6725,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "name",
+        "name": "personName",
         "label": "Nome",
         "value": ""
       },
@@ -6733,7 +6733,7 @@
         "component": "text",
         "valueType": "string",
         "name": "role",
-        "label": "Cargo / Título",
+        "label": "Cargo",
         "value": ""
       },
       {

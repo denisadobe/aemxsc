@@ -3,23 +3,22 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 
 const getText = (el) => el?.querySelector('p')?.textContent?.trim() || el?.textContent?.trim() || '';
 
-export default function decorate(block) {
-  // Read fields by data-aue-prop (UE) or by row index (published site)
-  const find = (prop, index) =>
-    block.querySelector(`[data-aue-prop="${prop}"]`) || block.children[index];
+const find = (block, prop, index) =>
+  block.querySelector(`[data-aue-prop="${prop}"]`) || block.children[index];
 
-  const imageRow = find('image', 0);
-  const nameRow = find('name', 1);
-  const roleRow = find('role', 2);
-  const ctaRow = find('cta', 3);
+export default function decorate(block) {
+  const imageRow = find(block, 'image', 0);
+  const nameRow = find(block, 'personName', 1);
+  const roleRow = find(block, 'role', 2);
+  const ctaRow = find(block, 'cta', 3);
 
   const card = document.createElement('div');
   card.className = 'profile-card-inner';
 
-  // Avatar
+  // Avatar — query img anywhere in the block to avoid nesting/prop issues
   const avatarWrapper = document.createElement('div');
   avatarWrapper.className = 'profile-card-avatar';
-  const img = imageRow?.querySelector('img');
+  const img = block.querySelector('img');
   if (img) {
     moveInstrumentation(imageRow, avatarWrapper);
     const optimizedPic = createOptimizedPicture(img.src, img.alt || '', false, [{ width: '200' }]);
@@ -28,7 +27,7 @@ export default function decorate(block) {
   }
   card.append(avatarWrapper);
 
-  // Name
+  // Nome
   const nameWrapper = document.createElement('div');
   nameWrapper.className = 'profile-card-name';
   moveInstrumentation(nameRow, nameWrapper);
@@ -37,7 +36,7 @@ export default function decorate(block) {
   nameWrapper.append(nameHeading);
   card.append(nameWrapper);
 
-  // Role
+  // Cargo
   const roleWrapper = document.createElement('div');
   roleWrapper.className = 'profile-card-role';
   moveInstrumentation(roleRow, roleWrapper);
@@ -46,7 +45,7 @@ export default function decorate(block) {
   roleWrapper.append(roleP);
   card.append(roleWrapper);
 
-  // CTA (optional)
+  // CTA (opcional)
   const ctaText = getText(ctaRow);
   if (ctaText) {
     const ctaWrapper = document.createElement('div');
