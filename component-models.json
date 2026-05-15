@@ -6726,21 +6726,14 @@
         "component": "text",
         "valueType": "string",
         "name": "name",
-        "label": "Name",
+        "label": "Nome",
         "value": ""
       },
       {
         "component": "text",
         "valueType": "string",
         "name": "role",
-        "label": "Role / Title",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "cargo",
-        "label": "Cargo",
+        "label": "Cargo / Título",
         "value": ""
       },
       {
