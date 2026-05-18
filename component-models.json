@@ -305,7 +305,7 @@
       {
         "component": "select",
         "name": "style",
-        "label": "Card Style",
+        "label": "Style",
         "valueType": "string",
         "value": "default",
         "options": [
