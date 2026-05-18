@@ -9,7 +9,16 @@ export default async function decorate(block) {
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
-const CTA_STYLES = new Set(['button', 'button-secondary', 'button-dark', 'default']);
+const CTA_STYLE_MAP = {
+  button: 'cta-button',
+  'button-secondary': 'cta-button-secondary',
+  'button-dark': 'cta-button-dark',
+  'cta-button': 'cta-button',
+  'cta-button-secondary': 'cta-button-secondary',
+  'cta-button-dark': 'cta-button-dark',
+  'cta-link': 'cta-link',
+  default: 'default',
+};
 const LABELS = {
   esg: 'ESG',
   seguranca: 'Segurança',
@@ -50,8 +59,8 @@ export default function decorate(block) {
         const value = p?.textContent?.trim() || '';
         const normalizedValue = normalize(value);
 
-        if (value && CTA_STYLES.has(value)) {
-          ctaStyle = value;
+        if (value && CTA_STYLE_MAP[value]) {
+          ctaStyle = CTA_STYLE_MAP[value];
         } else if (normalizedValue in LABELS || normalizedValue === 'nenhum' || normalizedValue === 'none') {
           label = normalizedValue;
         } else if (value && value !== 'default' && !cardStyle) {

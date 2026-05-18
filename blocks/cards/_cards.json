@@ -54,19 +54,23 @@
           "name": "ctastyle",
           "label": "CTA Style",
           "valueType": "string",
-          "value": "button",
+          "value": "cta-button",
           "options": [
             {
+              "name": "Link",
+              "value": "cta-link"
+            },
+            {
               "name": "Primary Button",
-              "value": "button"
+              "value": "cta-button"
             },
             {
               "name": "Secondary Button",
-              "value": "button-secondary"
+              "value": "cta-button-secondary"
             },
             {
               "name": "Dark Button",
-              "value": "button-dark"
+              "value": "cta-button-dark"
             }
           ]
         },
