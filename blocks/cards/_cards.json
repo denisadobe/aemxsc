@@ -69,14 +69,6 @@
               "value": "image-bottom"
             },
             {
-              "name": "Image Left",
-              "value": "image-left"
-            },
-            {
-              "name": "Image Right",
-              "value": "image-right"
-            },
-            {
               "name": "Teaser Overlay",
               "value": "teaser-overlay"
             },
