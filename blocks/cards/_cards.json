@@ -69,6 +69,35 @@
               "value": "button-dark"
             }
           ]
+        },
+        {
+          "component": "select",
+          "name": "label",
+          "label": "Etiqueta",
+          "valueType": "string",
+          "value": "nenhum",
+          "options": [
+            {
+              "name": "Nenhum",
+              "value": "nenhum"
+            },
+            {
+              "name": "ESG",
+              "value": "esg"
+            },
+            {
+              "name": "Segurança",
+              "value": "seguranca"
+            },
+            {
+              "name": "Investidores",
+              "value": "investidores"
+            },
+            {
+              "name": "Urgente",
+              "value": "urgente"
+            }
+          ]
         }
       ]
     }

@@ -111,6 +111,39 @@
   position: relative;
   display: block;
 }
+.cards .cards-card-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.cards .cards-card-label-esg {
+  background-color: #2e7d32;
+}
+
+.cards .cards-card-label-seguranca {
+  background-color: #1565c0;
+}
+
+.cards .cards-card-label-investidores {
+  background-color: #424242;
+}
+
+.cards .cards-card-label-urgente {
+  background-color: #c62828;
+}
 .cards > ul > li .cards-card-body {
   display: block;
   background-color: var(--background-color);

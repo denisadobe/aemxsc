@@ -9,68 +9,82 @@ export default async function decorate(block) {
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+const CTA_STYLES = new Set(['button', 'button-secondary', 'button-dark', 'default']);
+const LABELS = {
+  esg: 'ESG',
+  seguranca: 'Segurança',
+  investidores: 'Investidores',
+  urgente: 'Urgente',
+};
+
+const normalize = (value = '') => value
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .trim()
+  .toLowerCase();
+
 export default function decorate(block) {
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
     const li = document.createElement('li');
-    
-    // Read card style from the third div (index 2)
-    const styleDiv = row.children[2];
-    const styleParagraph = styleDiv?.querySelector('p');
-    const cardStyle = styleParagraph?.textContent?.trim() || 'default';
-    if (cardStyle && cardStyle !== 'default') {
-      li.className = cardStyle;
-    }
-    
-    // Read CTA style from the fourth div (index 3)
-    const ctaDiv = row.children[3];
-    const ctaParagraph = ctaDiv?.querySelector('p');
-    const ctaStyle = ctaParagraph?.textContent?.trim() || 'default';
-    
+
     moveInstrumentation(row, li);
     while (row.firstElementChild) li.append(row.firstElementChild);
-    
+
+    let cardStyle = '';
+    let ctaStyle = 'default';
+    let label = '';
+
     // Process the li children to identify and style them correctly
     [...li.children].forEach((div, index) => {
       // First div (index 0) - Image
       if (index === 0) {
         div.className = 'cards-card-image';
-      }
-      // Second div (index 1) - Content with button
-      else if (index === 1) {
+      } else if (index === 1) {
+        // Second div (index 1) - Content with button
         div.className = 'cards-card-body';
-      }
-      // Third div (index 2) - Card style configuration
-      else if (index === 2) {
+      } else if (index > 1) {
+        // Configuration divs (style, CTA, label)
         div.className = 'cards-config';
         const p = div.querySelector('p');
-        if (p) {
-          p.style.display = 'none'; // Hide the configuration text
+        const value = p?.textContent?.trim() || '';
+        const normalizedValue = normalize(value);
+
+        if (value && CTA_STYLES.has(value)) {
+          ctaStyle = value;
+        } else if (normalizedValue in LABELS || normalizedValue === 'nenhum' || normalizedValue === 'none') {
+          label = normalizedValue;
+        } else if (value && value !== 'default' && !cardStyle) {
+          cardStyle = value;
         }
-      }
-      // Fourth div (index 3) - CTA style configuration
-      else if (index === 3) {
-        div.className = 'cards-config';
-        const p = div.querySelector('p');
-        if (p) {
-          p.style.display = 'none'; // Hide the configuration text
-        }
-      }
-      // Any other divs
-      else {
-        div.className = 'cards-card-body';
+
+        if (p) p.style.display = 'none';
       }
     });
-    
+
+    if (cardStyle) {
+      li.classList.add(cardStyle);
+    }
+
+    if (label && label !== 'nenhum' && label !== 'none') {
+      const imageWrapper = li.querySelector('.cards-card-image');
+      if (imageWrapper) {
+        const badge = document.createElement('span');
+        badge.className = `cards-card-label cards-card-label-${label}`;
+        badge.textContent = LABELS[label];
+        imageWrapper.append(badge);
+      }
+    }
+
     // Apply CTA styles to button containers
     const buttonContainers = li.querySelectorAll('p.button-container');
-    buttonContainers.forEach(buttonContainer => {
+    buttonContainers.forEach((buttonContainer) => {
       // Remove any existing CTA classes
       buttonContainer.classList.remove('default', 'cta-button', 'cta-button-secondary', 'cta-button-dark', 'cta-default');
       // Add the correct CTA class
       buttonContainer.classList.add(ctaStyle);
     });
-    
+
     ul.append(li);
   });
   ul.querySelectorAll('picture > img').forEach((img) => {
@@ -78,7 +92,7 @@ export default function decorate(block) {
     moveInstrumentation(img, optimizedPic.querySelector('img'));
     img.closest('picture').replaceWith(optimizedPic);
   });
- 
+
   block.textContent = '';
   block.append(ul);
 }
