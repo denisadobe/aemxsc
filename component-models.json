@@ -522,6 +522,49 @@
     ]
   },
   {
+    "id": "download",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "file",
+        "label": "Arquivo (DAM)",
+        "valueType": "string",
+        "multi": false,
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "label",
+        "label": "Texto do Link",
+        "valueType": "string"
+      },
+      {
+        "component": "select",
+        "name": "variant",
+        "label": "Estilo",
+        "valueType": "string",
+        "value": "button",
+        "options": [
+          {
+            "name": "Button",
+            "value": "button"
+          },
+          {
+            "name": "Link",
+            "value": "link"
+          }
+        ]
+      },
+      {
+        "component": "boolean",
+        "name": "newtab",
+        "label": "Abrir em nova aba",
+        "valueType": "boolean",
+        "value": false
+      }
+    ]
+  },
+  {
     "id": "dynamic-media-image",
     "fields": [
       {

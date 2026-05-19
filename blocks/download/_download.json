@@ -1,0 +1,65 @@
+{
+  "definitions": [
+    {
+      "title": "Download",
+      "id": "download",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Download",
+              "model": "download"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "download",
+      "fields": [
+        {
+          "component": "reference",
+          "name": "file",
+          "label": "Arquivo (DAM)",
+          "valueType": "string",
+          "multi": false,
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "label",
+          "label": "Texto do Link",
+          "valueType": "string"
+        },
+        {
+          "component": "select",
+          "name": "variant",
+          "label": "Estilo",
+          "valueType": "string",
+          "value": "button",
+          "options": [
+            {
+              "name": "Button",
+              "value": "button"
+            },
+            {
+              "name": "Link",
+              "value": "link"
+            }
+          ]
+        },
+        {
+          "component": "boolean",
+          "name": "newtab",
+          "label": "Abrir em nova aba",
+          "valueType": "boolean",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "filters": []
+}
