@@ -116,23 +116,18 @@ export default async function decorate(block) {
       return;
     }
 
-    const rows = entries
+    const contents = entries
       .map(([key, value]) => {
         const contentType = contentTypes[key];
         const renderedValue = contentType === 'text/html' && typeof value === 'string'
           ? sanitizeHtml(value)
           : renderValue(value);
 
-        return `
-        <div class="cf-raw-row">
-          <dt class="cf-raw-key">${escapeHtml(key)}</dt>
-          <dd class="cf-raw-value">${renderedValue}</dd>
-        </div>
-      `;
+        return `<div class="cf-raw-item">${renderedValue}</div>`;
       })
       .join('');
 
-    block.innerHTML = `<dl class="cf-raw-list">${rows}</dl>`;
+    block.innerHTML = `<div class="cf-raw-list">${contents}</div>`;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error loading raw content fragment data', error);
