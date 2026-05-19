@@ -13,6 +13,24 @@ const isLikelyImagePath = (value) => typeof value === 'string'
   && /^\/content\/dam\//i.test(value)
   && /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(value.split('?')[0]);
 
+const VIDEO_EXTENSIONS_REGEX = /\.(mp4|mov|m4v|webm|ogv|ogg)$/i;
+const isLikelyVideoPath = (value) => typeof value === 'string'
+  && /^\/content\/dam\//i.test(value)
+  && VIDEO_EXTENSIONS_REGEX.test(value.split('?')[0]);
+
+const getMimeTypeFromVideoPath = (path) => {
+  const ext = path.split('?')[0].split('.').pop()?.toLowerCase();
+  const byExt = {
+    mp4: 'video/mp4',
+    mov: 'video/quicktime',
+    m4v: 'video/x-m4v',
+    webm: 'video/webm',
+    ogv: 'video/ogg',
+    ogg: 'video/ogg',
+  };
+  return byExt[ext] || 'video/mp4';
+};
+
 const sanitizeHtml = (htmlString) => {
   const parser = new DOMParser();
   const documentFragment = parser.parseFromString(htmlString, 'text/html');
@@ -31,6 +49,23 @@ const sanitizeHtml = (htmlString) => {
         element.removeAttribute(name);
       }
     });
+  });
+
+  documentFragment.querySelectorAll('img[src]').forEach((img) => {
+    const src = img.getAttribute('src') || '';
+    if (!isLikelyVideoPath(src)) return;
+
+    const video = documentFragment.createElement('video');
+    video.setAttribute('controls', '');
+    video.setAttribute('preload', 'metadata');
+    video.setAttribute('playsinline', '');
+
+    const source = documentFragment.createElement('source');
+    source.setAttribute('src', src);
+    source.setAttribute('type', getMimeTypeFromVideoPath(src));
+
+    video.appendChild(source);
+    img.replaceWith(video);
   });
 
   return documentFragment.body.innerHTML;
