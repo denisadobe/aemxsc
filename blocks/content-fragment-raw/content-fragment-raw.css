@@ -1,0 +1,63 @@
+.content-fragment-raw-wrapper .content-fragment-raw {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-header p {
+  margin: 0;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-list {
+  margin: 0;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-key {
+  font-weight: 700;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-value {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-value pre {
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 6px;
+  background: #f7f7f8;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-null,
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-empty,
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-error {
+  color: #666;
+}
+
+@media (width < 600px) {
+  .content-fragment-raw-wrapper .content-fragment-raw .cf-raw-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
