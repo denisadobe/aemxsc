@@ -1,5 +1,5 @@
 import { getMetadata } from '../../scripts/aem.js';
-import { isAuthorEnvironment } from '../../scripts/scripts.js';
+import { isAuthorEnvironment, moveInstrumentation } from '../../scripts/scripts.js';
 import { getHostname } from '../../scripts/utils.js';
 
 const escapeHtml = (value) => String(value)
@@ -70,6 +70,11 @@ const TECHNICAL_FIELD_PATTERNS = [
 ];
 
 const isContentField = (key) => !TECHNICAL_FIELD_PATTERNS.some((pattern) => pattern.test(key));
+const inferAueType = (value, contentType) => {
+  if (contentType === 'text/html') return 'richtext';
+  if (isLikelyImagePath(value)) return 'media';
+  return 'text';
+};
 
 /**
  * loads and decorates the block
@@ -94,6 +99,7 @@ export default async function decorate(block) {
   const baseUrl = isAuthor ? authorUrl : publishUrl;
 
   const endpoint = `${baseUrl}${contentPath}/jcr:content/data/${variation}.json`;
+  const itemId = `urn:aemconnection:${contentPath}/jcr:content/data/${variation}`;
 
   try {
     const response = await fetch(endpoint);
@@ -119,15 +125,41 @@ export default async function decorate(block) {
     const contents = entries
       .map(([key, value]) => {
         const contentType = contentTypes[key];
+        const aueType = inferAueType(value, contentType);
         const renderedValue = contentType === 'text/html' && typeof value === 'string'
           ? sanitizeHtml(value)
           : renderValue(value);
 
-        return `<div class="cf-raw-item">${renderedValue}</div>`;
+        return `
+          <div
+            class="cf-raw-item"
+            data-aue-prop="${escapeHtml(key)}"
+            data-aue-label="${escapeHtml(key)}"
+            data-aue-type="${aueType}"
+          >
+            ${renderedValue}
+          </div>
+        `;
       })
       .join('');
 
-    block.innerHTML = `<div class="cf-raw-list">${contents}</div>`;
+    block.setAttribute('data-aue-type', 'container');
+    block.innerHTML = `
+      <div
+        class="cf-raw-list"
+        data-aue-resource="${escapeHtml(itemId)}"
+        data-aue-label="${escapeHtml(variation || 'Elements')}"
+        data-aue-type="reference"
+        data-aue-filter="contentfragment"
+      >
+        ${contents}
+      </div>
+    `;
+
+    if (!isAuthor) {
+      moveInstrumentation(block, null);
+      block.querySelectorAll('*').forEach((elem) => moveInstrumentation(elem, null));
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error loading raw content fragment data', error);
