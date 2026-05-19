@@ -36,6 +36,14 @@
   line-height: 1.4;
 }
 
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-item img,
+.content-fragment-raw-wrapper .content-fragment-raw .cf-raw-item video {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+}
+
 .content-fragment-raw-wrapper .content-fragment-raw .cf-raw-null,
 .content-fragment-raw-wrapper .content-fragment-raw .cf-raw-empty,
 .content-fragment-raw-wrapper .content-fragment-raw .cf-raw-error {
