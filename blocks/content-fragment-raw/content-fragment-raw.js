@@ -9,8 +9,39 @@ const escapeHtml = (value) => String(value)
   .replaceAll('"', '&quot;')
   .replaceAll("'", '&#39;');
 
+const isLikelyImagePath = (value) => typeof value === 'string'
+  && /^\/content\/dam\//i.test(value)
+  && /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(value.split('?')[0]);
+
+const sanitizeHtml = (htmlString) => {
+  const parser = new DOMParser();
+  const documentFragment = parser.parseFromString(htmlString, 'text/html');
+  const blockedTags = ['script', 'iframe', 'object', 'embed', 'link', 'meta', 'style'];
+
+  blockedTags.forEach((tag) => {
+    documentFragment.querySelectorAll(tag).forEach((node) => node.remove());
+  });
+
+  documentFragment.querySelectorAll('*').forEach((element) => {
+    [...element.attributes].forEach((attribute) => {
+      const { name, value } = attribute;
+      const isEventHandler = /^on/i.test(name);
+      const isJsUrl = /^(href|src)$/i.test(name) && /^\s*javascript:/i.test(value);
+      if (isEventHandler || isJsUrl) {
+        element.removeAttribute(name);
+      }
+    });
+  });
+
+  return documentFragment.body.innerHTML;
+};
+
 const renderValue = (value) => {
   if (value === null || value === undefined) return '<span class="cf-raw-null">null</span>';
+
+  if (isLikelyImagePath(value)) {
+    return `<img src="${escapeHtml(value)}" alt="" loading="lazy">`;
+  }
 
   if (typeof value === 'object') {
     const rawJson = JSON.stringify(value, null, 2);
@@ -35,6 +66,7 @@ const TECHNICAL_FIELD_PATTERNS = [
   /primarytype/i,
   /mixin/i,
   /uuid/i,
+  /@contenttype$/i,
 ];
 
 const isContentField = (key) => !TECHNICAL_FIELD_PATTERNS.some((pattern) => pattern.test(key));
@@ -72,6 +104,12 @@ export default async function decorate(block) {
 
     const data = await response.json();
     const entries = Object.entries(data).filter(([key]) => isContentField(key));
+    const contentTypes = Object.entries(data)
+      .filter(([key]) => /@contenttype$/i.test(key))
+      .reduce((acc, [key, value]) => {
+        acc[key.replace(/@contenttype$/i, '')] = value;
+        return acc;
+      }, {});
 
     if (!entries.length) {
       block.innerHTML = '<p class="cf-raw-empty">No content fields found for this variation.</p>';
@@ -79,12 +117,19 @@ export default async function decorate(block) {
     }
 
     const rows = entries
-      .map(([key, value]) => `
+      .map(([key, value]) => {
+        const contentType = contentTypes[key];
+        const renderedValue = contentType === 'text/html' && typeof value === 'string'
+          ? sanitizeHtml(value)
+          : renderValue(value);
+
+        return `
         <div class="cf-raw-row">
           <dt class="cf-raw-key">${escapeHtml(key)}</dt>
-          <dd class="cf-raw-value">${renderValue(value)}</dd>
+          <dd class="cf-raw-value">${renderedValue}</dd>
         </div>
-      `)
+      `;
+      })
       .join('');
 
     block.innerHTML = `<dl class="cf-raw-list">${rows}</dl>`;
