@@ -20,6 +20,25 @@ const renderValue = (value) => {
   return `<span>${escapeHtml(value)}</span>`;
 };
 
+const TECHNICAL_FIELD_PATTERNS = [
+  /^jcr:/i,
+  /^cq:/i,
+  /^sling:/i,
+  /^dc:/i,
+  /^dam:/i,
+  /^_./,
+  /lastmodified/i,
+  /lastmodifiedby/i,
+  /created/i,
+  /createdby/i,
+  /version/i,
+  /primarytype/i,
+  /mixin/i,
+  /uuid/i,
+];
+
+const isContentField = (key) => !TECHNICAL_FIELD_PATTERNS.some((pattern) => pattern.test(key));
+
 /**
  * loads and decorates the block
  * @param {Element} block The block element
@@ -52,10 +71,10 @@ export default async function decorate(block) {
     }
 
     const data = await response.json();
-    const entries = Object.entries(data);
+    const entries = Object.entries(data).filter(([key]) => isContentField(key));
 
     if (!entries.length) {
-      block.innerHTML = '<p class="cf-raw-empty">No fields found for this variation.</p>';
+      block.innerHTML = '<p class="cf-raw-empty">No content fields found for this variation.</p>';
       return;
     }
 
@@ -68,15 +87,7 @@ export default async function decorate(block) {
       `)
       .join('');
 
-    block.innerHTML = `
-      <div class="cf-raw-header">
-        <p><strong>Path:</strong> ${escapeHtml(contentPath)}</p>
-        <p><strong>Variation:</strong> ${escapeHtml(variation)}</p>
-      </div>
-      <dl class="cf-raw-list">
-        ${rows}
-      </dl>
-    `;
+    block.innerHTML = `<dl class="cf-raw-list">${rows}</dl>`;
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error loading raw content fragment data', error);
