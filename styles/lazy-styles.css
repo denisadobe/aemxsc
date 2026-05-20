@@ -1,1 +1,11 @@
 /* add global styles that can be loaded post LCP here */
+
+/* =========================================================
+   RTE text color styles
+   Applied via the Styles dropdown in the Universal Editor RTE toolbar.
+   Wrap selected text in a <span class="rte-color-*"> element.
+   ========================================================= */
+.rte-color-primary { color: var(--main-accent-color); }
+.rte-color-dark    { color: var(--dark-color); }
+.rte-color-muted   { color: #717171; }
+.rte-color-white   { color: #ffffff; }
