@@ -281,18 +281,7 @@
         "name": "text",
         "value": "",
         "label": "Text",
-        "valueType": "string",
-        "plugins": {
-          "styles": {
-            "features": ["styles"],
-            "styles": [
-              { "cssName": "rte-color-primary", "text": "Laranja (primária)" },
-              { "cssName": "rte-color-dark",    "text": "Escuro" },
-              { "cssName": "rte-color-muted",   "text": "Cinza" },
-              { "cssName": "rte-color-white",   "text": "Branco" }
-            ]
-          }
-        }
+        "valueType": "string"
       }
     ]
   },
