@@ -21,11 +21,13 @@
       "id": "video-gallery",
       "fields": [
         {
-          "component": "aem-content-picker",
+          "component": "aem-content",
           "valueType": "string",
           "name": "folderPath",
           "label": "Pasta de vídeos no DAM",
-          "value": ""
+          "validation": {
+            "rootPath": "/content/dam"
+          }
         },
         {
           "component": "number",
