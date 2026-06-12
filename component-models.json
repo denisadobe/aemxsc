@@ -6326,13 +6326,6 @@
         "name": "maxVideos",
         "label": "Máximo de vídeos",
         "value": 6
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "apiKey",
-        "label": "YouTube API Key",
-        "value": ""
       }
     ]
   },

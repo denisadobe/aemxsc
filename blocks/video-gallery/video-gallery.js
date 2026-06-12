@@ -1,5 +1,3 @@
-const YT_API = 'https://www.googleapis.com/youtube/v3';
-
 function extractPlaylistId(url) {
   try {
     const u = new URL(url);
@@ -9,10 +7,9 @@ function extractPlaylistId(url) {
   }
 }
 
-function buildThumbnail(videoId, title) {
+function buildCard(videoId, title) {
   const wrap = document.createElement('div');
   wrap.className = 'video-gallery-item';
-  wrap.dataset.videoid = videoId;
 
   const thumb = document.createElement('div');
   thumb.className = 'video-gallery-thumb';
@@ -31,7 +28,6 @@ function buildThumbnail(videoId, title) {
 
   const info = document.createElement('div');
   info.className = 'video-gallery-info';
-
   const h3 = document.createElement('h3');
   h3.textContent = title;
   info.append(h3);
@@ -53,70 +49,45 @@ function buildThumbnail(videoId, title) {
 
 export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
-
   const playlistUrl = rows[0]?.querySelector('div')?.textContent?.trim();
   const maxVideos = parseInt(rows[1]?.querySelector('div')?.textContent?.trim(), 10) || 6;
-  const apiKey = rows[2]?.querySelector('div')?.textContent?.trim();
 
   block.innerHTML = '';
 
-  if (!playlistUrl || !apiKey) {
-    block.textContent = 'Configuração incompleta: informe a URL da playlist e a API Key.';
+  if (!playlistUrl) {
+    block.textContent = 'Configuração incompleta: informe a URL da playlist.';
     return;
   }
 
   const playlistId = extractPlaylistId(playlistUrl);
+  const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
+
+  let xml;
+  try {
+    const resp = await fetch(feedUrl);
+    if (!resp.ok) throw new Error(resp.status);
+    const text = await resp.text();
+    xml = new DOMParser().parseFromString(text, 'application/xml');
+  } catch {
+    block.textContent = 'Não foi possível carregar os vídeos. Verifique a URL da playlist.';
+    return;
+  }
+
+  const entries = [...xml.querySelectorAll('entry')].slice(0, maxVideos);
+
+  if (!entries.length) {
+    block.textContent = 'Nenhum vídeo encontrado na playlist.';
+    return;
+  }
 
   const grid = document.createElement('div');
   grid.className = 'video-gallery-grid';
 
-  const loadMore = document.createElement('button');
-  loadMore.className = 'video-gallery-load-more';
-  loadMore.textContent = 'Ver mais vídeos';
+  entries.forEach((entry) => {
+    const videoId = entry.querySelector('videoId')?.textContent;
+    const title = entry.querySelector('title')?.textContent;
+    if (videoId && title) grid.append(buildCard(videoId, title));
+  });
 
-  block.append(grid, loadMore);
-
-  let nextPageToken = '';
-  let loaded = 0;
-
-  async function loadVideos() {
-    const pageSize = Math.min(maxVideos - loaded, 50);
-    if (pageSize <= 0) {
-      loadMore.hidden = true;
-      return;
-    }
-
-    const params = new URLSearchParams({
-      part: 'snippet',
-      playlistId,
-      maxResults: pageSize,
-      key: apiKey,
-      ...(nextPageToken && { pageToken: nextPageToken }),
-    });
-
-    const resp = await fetch(`${YT_API}/playlistItems?${params}`);
-    if (!resp.ok) {
-      block.textContent = 'Erro ao carregar vídeos. Verifique a playlist e a API Key.';
-      return;
-    }
-
-    const data = await resp.json();
-    nextPageToken = data.nextPageToken || '';
-
-    data.items.forEach((item) => {
-      const videoId = item.snippet?.resourceId?.videoId;
-      const title = item.snippet?.title;
-      if (videoId && title) {
-        grid.append(buildThumbnail(videoId, title));
-        loaded += 1;
-      }
-    });
-
-    loadMore.hidden = !nextPageToken || loaded >= maxVideos;
-  }
-
-  loadMore.addEventListener('click', loadVideos);
-  loadMore.hidden = true;
-
-  await loadVideos();
+  block.append(grid);
 }
