@@ -1,30 +1,20 @@
-function extractPlaylistId(url) {
-  try {
-    const u = new URL(url);
-    return u.searchParams.get('list') || url.trim();
-  } catch {
-    return url.trim();
-  }
-}
+function buildCard(asset) {
+  const { name, 'dc:title': dcTitle, 'jcr:path': path } = asset.properties || {};
+  const title = dcTitle || name || path?.split('/').pop() || '';
+  const videoSrc = `${path}`;
 
-function buildCard(videoId, title) {
   const wrap = document.createElement('div');
   wrap.className = 'video-gallery-item';
 
   const thumb = document.createElement('div');
   thumb.className = 'video-gallery-thumb';
 
-  const img = document.createElement('img');
-  img.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-  img.alt = title;
-  img.loading = 'lazy';
-
   const playBtn = document.createElement('button');
   playBtn.className = 'video-gallery-play';
   playBtn.setAttribute('aria-label', `Reproduzir: ${title}`);
   playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
-  thumb.append(img, playBtn);
+  thumb.append(playBtn);
 
   const info = document.createElement('div');
   info.className = 'video-gallery-info';
@@ -35,12 +25,12 @@ function buildCard(videoId, title) {
   wrap.append(thumb, info);
 
   playBtn.addEventListener('click', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    iframe.allow = 'autoplay; encrypted-media';
-    iframe.allowFullscreen = true;
-    iframe.title = title;
-    thumb.replaceWith(iframe);
+    const video = document.createElement('video');
+    video.src = videoSrc;
+    video.controls = true;
+    video.autoplay = true;
+    video.style.width = '100%';
+    thumb.replaceWith(video);
     wrap.classList.add('playing');
   });
 
@@ -49,45 +39,40 @@ function buildCard(videoId, title) {
 
 export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
-  const playlistUrl = rows[0]?.querySelector('div')?.textContent?.trim();
+  const folderPath = rows[0]?.querySelector('div')?.textContent?.trim();
   const maxVideos = parseInt(rows[1]?.querySelector('div')?.textContent?.trim(), 10) || 6;
 
   block.innerHTML = '';
 
-  if (!playlistUrl) {
-    block.textContent = 'Configuração incompleta: informe a URL da playlist.';
+  if (!folderPath) {
+    block.textContent = 'Configuração incompleta: selecione uma pasta do DAM.';
     return;
   }
 
-  const playlistId = extractPlaylistId(playlistUrl);
-  const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
+  const apiUrl = `/api/assets${folderPath}.json?orderby=%40jcr%3AlastModified&p.limit=${maxVideos}`;
 
-  let xml;
+  let data;
   try {
-    const resp = await fetch(feedUrl);
+    const resp = await fetch(apiUrl);
     if (!resp.ok) throw new Error(resp.status);
-    const text = await resp.text();
-    xml = new DOMParser().parseFromString(text, 'application/xml');
+    data = await resp.json();
   } catch {
-    block.textContent = 'Não foi possível carregar os vídeos. Verifique a URL da playlist.';
+    block.textContent = 'Não foi possível carregar os vídeos.';
     return;
   }
 
-  const entries = [...xml.querySelectorAll('entry')].slice(0, maxVideos);
+  const assets = (data.entities || []).filter((e) => {
+    const mime = e.properties?.['dc:format'] || '';
+    return mime.startsWith('video/');
+  });
 
-  if (!entries.length) {
-    block.textContent = 'Nenhum vídeo encontrado na playlist.';
+  if (!assets.length) {
+    block.textContent = 'Nenhum vídeo encontrado na pasta selecionada.';
     return;
   }
 
   const grid = document.createElement('div');
   grid.className = 'video-gallery-grid';
-
-  entries.forEach((entry) => {
-    const videoId = entry.querySelector('videoId')?.textContent;
-    const title = entry.querySelector('title')?.textContent;
-    if (videoId && title) grid.append(buildCard(videoId, title));
-  });
-
+  assets.forEach((asset) => grid.append(buildCard(asset)));
   block.append(grid);
 }

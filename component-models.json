@@ -6314,10 +6314,10 @@
     "id": "video-gallery",
     "fields": [
       {
-        "component": "text",
+        "component": "aem-content-picker",
         "valueType": "string",
-        "name": "playlistUrl",
-        "label": "URL da Playlist do YouTube",
+        "name": "folderPath",
+        "label": "Pasta de vídeos no DAM",
         "value": ""
       },
       {
