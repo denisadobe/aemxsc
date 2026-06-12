@@ -1,7 +1,12 @@
+function cleanTitle(raw, path) {
+  if (raw) return raw;
+  return (path.split('/').pop() || '').replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+}
+
 function buildCard(asset) {
   const path = asset['jcr:path'] || '';
-  const title = asset['jcr:content/metadata/dc:title'] || path.split('/').pop() || '';
-  const videoSrc = path;
+  const title = cleanTitle(asset['jcr:content/metadata/dc:title'], path);
+  const thumbnail = `${path}/_jcr_content/renditions/cq5dam.thumbnail.319.319.png`;
 
   const wrap = document.createElement('div');
   wrap.className = 'video-gallery-item';
@@ -9,27 +14,37 @@ function buildCard(asset) {
   const thumb = document.createElement('div');
   thumb.className = 'video-gallery-thumb';
 
+  const img = document.createElement('img');
+  img.src = thumbnail;
+  img.alt = title;
+  img.loading = 'lazy';
+  img.onerror = () => { img.style.display = 'none'; };
+
   const playBtn = document.createElement('button');
   playBtn.className = 'video-gallery-play';
   playBtn.setAttribute('aria-label', `Reproduzir: ${title}`);
   playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
-  thumb.append(playBtn);
+  thumb.append(img, playBtn);
 
   const info = document.createElement('div');
   info.className = 'video-gallery-info';
+
   const h3 = document.createElement('h3');
   h3.textContent = title;
-  info.append(h3);
 
+  const badge = document.createElement('span');
+  badge.className = 'video-gallery-badge';
+  badge.textContent = (path.split('.').pop() || 'video').toUpperCase();
+
+  info.append(h3, badge);
   wrap.append(thumb, info);
 
   playBtn.addEventListener('click', () => {
     const video = document.createElement('video');
-    video.src = videoSrc;
+    video.src = path;
     video.controls = true;
     video.autoplay = true;
-    video.style.width = '100%';
     thumb.replaceWith(video);
     wrap.classList.add('playing');
   });
