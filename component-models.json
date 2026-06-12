@@ -6311,6 +6311,32 @@
     ]
   },
   {
+    "id": "video-gallery",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "playlistUrl",
+        "label": "URL da Playlist do YouTube",
+        "value": ""
+      },
+      {
+        "component": "number",
+        "valueType": "number",
+        "name": "maxVideos",
+        "label": "Máximo de vídeos",
+        "value": 6
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "apiKey",
+        "label": "YouTube API Key",
+        "value": ""
+      }
+    ]
+  },
+  {
     "id": "video",
     "fields": [
       {
