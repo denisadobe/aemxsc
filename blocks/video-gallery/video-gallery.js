@@ -1,7 +1,7 @@
 function buildCard(asset) {
-  const { name, 'dc:title': dcTitle, 'jcr:path': path } = asset.properties || {};
-  const title = dcTitle || name || path?.split('/').pop() || '';
-  const videoSrc = `${path}`;
+  const path = asset['jcr:path'] || '';
+  const title = asset['jcr:content/metadata/dc:title'] || path.split('/').pop() || '';
+  const videoSrc = path;
 
   const wrap = document.createElement('div');
   wrap.className = 'video-gallery-item';
@@ -51,7 +51,19 @@ export default async function decorate(block) {
 
   // normalize: ensure single leading slash, strip trailing slash
   const damPath = `/${rawPath.replace(/^\/+/, '').replace(/\/+$/, '')}`;
-  const apiUrl = `/api/assets${damPath}.json?orderby=%40jcr%3AlastModified&p.limit=${maxVideos}`;
+  const params = new URLSearchParams({
+    'path': damPath,
+    'type': 'dam:Asset',
+    'property': 'jcr:content/metadata/dc:format',
+    'property.operation': 'like',
+    'property.value': 'video/%',
+    'orderby': '@jcr:content/jcr:lastModified',
+    'orderby.sort': 'desc',
+    'p.limit': maxVideos,
+    'p.hits': 'selective',
+    'p.properties': 'jcr:path jcr:content/metadata/dc:title jcr:content/metadata/dc:format',
+  });
+  const apiUrl = `/bin/querybuilder.json?${params}`;
 
   let data;
   try {
@@ -63,13 +75,7 @@ export default async function decorate(block) {
     return;
   }
 
-  // folder response has entities; single asset response has properties directly
-  let assets = [];
-  if (data.entities) {
-    assets = data.entities.filter((e) => (e.properties?.['dc:format'] || '').startsWith('video/'));
-  } else if ((data.properties?.['dc:format'] || '').startsWith('video/')) {
-    assets = [data];
-  }
+  const assets = (data.hits || []);
 
   if (!assets.length) {
     block.textContent = 'Nenhum vídeo encontrado. Selecione uma pasta com vídeos no DAM.';
