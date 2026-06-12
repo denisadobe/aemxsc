@@ -39,17 +39,19 @@ function buildCard(asset) {
 
 export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
-  const folderPath = rows[0]?.querySelector('div')?.textContent?.trim();
+  const rawPath = rows[0]?.querySelector('div')?.textContent?.trim();
   const maxVideos = parseInt(rows[1]?.querySelector('div')?.textContent?.trim(), 10) || 6;
 
   block.innerHTML = '';
 
-  if (!folderPath) {
+  if (!rawPath) {
     block.textContent = 'Configuração incompleta: selecione uma pasta do DAM.';
     return;
   }
 
-  const apiUrl = `/api/assets${folderPath}.json?orderby=%40jcr%3AlastModified&p.limit=${maxVideos}`;
+  // normalize: ensure single leading slash, strip trailing slash
+  const damPath = `/${rawPath.replace(/^\/+/, '').replace(/\/+$/, '')}`;
+  const apiUrl = `/api/assets${damPath}.json?orderby=%40jcr%3AlastModified&p.limit=${maxVideos}`;
 
   let data;
   try {
@@ -61,13 +63,16 @@ export default async function decorate(block) {
     return;
   }
 
-  const assets = (data.entities || []).filter((e) => {
-    const mime = e.properties?.['dc:format'] || '';
-    return mime.startsWith('video/');
-  });
+  // folder response has entities; single asset response has properties directly
+  let assets = [];
+  if (data.entities) {
+    assets = data.entities.filter((e) => (e.properties?.['dc:format'] || '').startsWith('video/'));
+  } else if ((data.properties?.['dc:format'] || '').startsWith('video/')) {
+    assets = [data];
+  }
 
   if (!assets.length) {
-    block.textContent = 'Nenhum vídeo encontrado na pasta selecionada.';
+    block.textContent = 'Nenhum vídeo encontrado. Selecione uma pasta com vídeos no DAM.';
     return;
   }
 
